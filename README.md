@@ -2,7 +2,7 @@
 
 *A clean, modern, and reliable browser-based tool to check your internet's online status, latency, and network details.*
 
-👉 **Live Demo:**  
+👉 **Live Demo: [Click Here](https://biraj2004.github.io/is-my-internet-working/) **  
 
 ---
 
@@ -20,7 +20,7 @@ Displays:
 
 - **IPv4 Address**  
 - **ISP Name**  
-- **Location** (City, Region, Country)  -- [work in progress]
+- **Location** (City, Region, Country)  -- [cross-check, may not be accurate]
 - **ASN (Autonomous System Number)**  
 
 ### ⚡ Latency (Ping) Test  
