@@ -1,47 +1,89 @@
-My-Internet-Tester
+# 📡 My-Internet-Tester
 
- Live Link - 
+*A clean, modern, and reliable browser-based tool to check your internet status, latency, and network details.*
 
-A clean, modern, and reliable browser-based tool to check your internet status, latency, and network details.
+👉 **Live Demo:**  
 
-Features
+---
 
-Real-time Status: Instantly know if your internet is YES! (Online), NO! (Offline), or WAIT! (Checking).
+## 🚀 Features
 
-Network Statistics: Get your IPv4 Address, ISP, and Location (City, Region, Country).
+### ✅ Real-Time Internet Status  
+Instantly tells you whether your internet is:
 
-Latency (Ping) Test: Measures your connection's latency against reliable global CDNs.
+- **YES!** – Online  
+- **NO!** – Offline  
+- **WAIT!** – Checking...
 
-DNS Resolution Test: Checks your DNS lookup speed against fast DoH resolvers (like Cloudflare & Google).
+### 🌐 Network Statistics  
+Displays:
 
-Jitter Test: Run a stability test for 30s, 1m, or 2m to measure connection stability (jitter).
+- **IPv4 Address**  
+- **ISP Name**  
+- **Location** (City, Region, Country)  
+- **ASN (Autonomous System Number)**  
 
-Auto-Refresh: Automatically re-run the ping test at intervals from 2s to 15s.
+### ⚡ Latency (Ping) Test  
+Measures latency using global CDN endpoints such as:
 
-Fully Responsive: Looks and works great on desktop, tablet, and mobile.
+- Google `generate_204`  
+- Google `clients3`  
+- Cloudflare Trace  
 
-Tech Stack
+Runs multiple attempts and uses the **median** latency for accuracy.
 
-HTML5
+### 🧭 DNS Resolution Test  
+Performs DNS lookup speed tests using DNS-over-HTTPS (DoH):
 
-Tailwind CSS
+- Cloudflare DoH  
+- Google DoH  
 
-JavaScript (ES6+) (using Fetch API, navigator.onLine, and performance.now())
+Shows the **median DNS resolution time**.
 
-How to Get Your Own Live Link
+### 📉 Jitter Test  
+Run a complete stability test for:
 
-You can host this for free on GitHub Pages:
+- **30 seconds**  
+- **1 minute**  
+- **2 minutes**
 
-Create a new repository on GitHub (e.g., My-Internet-Tester).
+Includes:
 
-Rename the internet_tester.html file to index.html.
+- Jitter  
+- Average Latency  
+- Minimum Latency  
+- Maximum Latency  
 
-Upload the index.html file to your new repository.
+### 🔁 Auto-Refresh  
+Automatically re-runs the ping test at:
 
-In your repository, go to Settings > Pages.
+- **2 seconds**  
+- **5 seconds**  
+- **10 seconds**  
+- **15 seconds**
 
-Under "Build and deployment", select Deploy from a branch.
+### 📱 Fully Responsive  
+Works smoothly on:
 
-Set the branch to main (or master) and the folder to / (root). Click Save.
+- Desktop  
+- Tablet  
+- Mobile  
 
-Wait a minute, and your live link will appear in that same section!
+---
+
+## 🛠 Tech Stack
+
+This project uses:
+
+- **HTML5**  
+- **Tailwind CSS**  
+- **JavaScript (ES6+)**  
+  - Fetch API  
+  - DNS-over-HTTPS  
+  - navigator.onLine  
+  - performance.now()
+ 
+## 👨‍💻 Author
+
+Developed by **Biraj Sarkar**.  
+Give the repo a ⭐ if you like the project!
