@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internet Status Checker</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Use Inter font family -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Base font */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Simple spinning animation */
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .spinner {
+            display: inline-block;
+            width: 1.25rem; /* 20px */
+            height: 1.25rem; /* 20px */
+            border: 2px solid currentColor;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        /* Jitter progress bar animation */
+        .progress-bar {
+            transition: width 0.25s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen text-gray-800 p-4 md:p-8">
+
+    <div class="max-w-4xl mx-auto">
+        
+        <!-- App Title & Credits Header -->
+        <header class="mb-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-blue-600">My-Internet-Tester</h1>
+            
+            <div class="text-sm text-gray-500">
+                Created by <a href="https://github.com/Biraj2004" target="_blank" rel="noopener noreferrer" class="font-medium text-blue-600 hover:underline inline-flex items-center space-x-1.5">
+                    <span class="font-bold">Biraj Sarkar</span>
+                    <!-- GitHub Icon -->
+                    <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.22.48-2.69-1.07-2.69-1.07-.36-.92-.89-1.17-.89-1.17-.73-.5.05-.49.05-.49.81.06 1.23.83 1.23.83.72 1.22 1.89.87 2.35.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.19 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+                    </svg>
+                </a>
+            </div>
+        </header>
+        
+        <!-- Main Status -->
+        <div class="text-center mb-6"> <!-- Polished: Increased bottom margin -->
+            <h1 id="status-title" class="text-7xl md:text-8xl font-extrabold text-green-600 transition-colors duration-300">
+                YES!
+            </h1>
+            <p id="status-subtitle" class="text-xl md:text-2xl font-medium text-gray-600">Your Internet is Working!</p>
+            
+            <!-- Loading Message (Initial) - Positioned ABOVE the timer -->
+            <p id="loading-message" class="text-lg font-medium text-orange-600 mt-4 flex items-center justify-center space-x-2">
+                <span class="spinner"></span>
+                <span>Hold On! I am Checking...</span>
+            </p>
+
+            <!-- Auto Test Dropdown - Positioned BELOW the loading message -->
+            <div class="mt-4">
+                <label for="auto-test" class="text-sm font-medium text-gray-500 mr-2">Auto-test:</label>
+                <select id="auto-test" class="rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    <option value="2000">2 sec</option>
+                    <option value="3000">3 sec</option>
+                    <option value="5000">5 sec</option>
+                    <option value="10000">10 sec</option>
+                    <option value="15000">15 sec</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Data Grid -->
+        <main class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            
+            <!-- Network Statistics Card (Full Width) -->
+            <div class="bg-white rounded-xl shadow-lg p-6 md:col-span-2">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center">
+                        <svg class="h-6 w-6 text-blue-500 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 17.25v-.228a4.5 4.5 0 0 0-.12-1.03l-2.268-9.64a3.375 3.375 0 0 0-3.285-2.6A3.375 3.375 0 0 0 12.75 3.75H11.25a3.375 3.375 0 0 0-3.285 2.6l-2.268 9.64a4.5 4.5 0 0 0-.12 1.03v.228m19.5 0a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3m19.5 0a3 3 0 0 0-3-3H5.25a3 3 0 0 0-3 3m16.5 0h.008v.008h-.008v-.008Zm-3 0h.008v.008h-.008v-.008Zm-3 0h.008v.008h-.008v-.008Zm-3 0h.008v.008h-.008v-.008Z" />
+                        </svg>
+                        <h2 class="text-sm font-semibold text-gray-600 uppercase tracking-wider">Network Statistics</h2>
+                    </div>
+                </div>
+                <p id="ip-address" class="text-3xl font-bold text-gray-900 truncate">
+                    <span class="spinner inline-block align-middle"></span>
+                </p>
+                <div class="mt-4 space-y-2 text-sm text-gray-700">
+                    <div class="flex justify-between flex-wrap">
+                        <span class="font-medium text-gray-500 mr-2">ISP:</span>
+                        <span id="isp-details" class="font-semibold text-right break-all"><span class="spinner inline-block align-middle"></span></span>
+                    </div>
+                    <div class="flex justify-between flex-wrap">
+                        <span class="font-medium text-gray-500 mr-2">Location:</span>
+                        <span id="location-details" class="font-semibold text-right"><span class="spinner inline-block align-middle"></span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ping Card -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <div class="flex items-center mb-3">
+                    <svg class="h-6 w-6 text-red-500 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <h2 class="text-sm font-semibold text-gray-600 uppercase tracking-wider">Ping (Latency)</h2>
+                </div>
+                <div class="flex items-baseline">
+                    <p id="ping" class="text-3xl font-bold text-gray-900">
+                        <span class="spinner inline-block align-middle"></span>
+                    </p>
+                    <span id="ping-unit" class="text-xl font-medium text-gray-600 ml-2"></span>
+                </div>
+                <p class="text-xs text-gray-400 italic mt-2">
+                    Testing against global CDNs
+                </p>
+            </div>
+
+            <!-- DNS Resolution Card -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <div class="flex items-center mb-3">
+                    <svg class="h-6 w-6 text-purple-500 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" />
+                    </svg>
+                    <h2 class="text-sm font-semibold text-gray-600 uppercase tracking-wider">DNS Resolution</h2>
+                </div>
+                <div class="flex items-baseline">
+                    <p id="dns-resolution" class="text-3xl font-bold text-gray-900">
+                        <span class="spinner inline-block align-middle"></span>
+                    </p>
+                    <span id="dns-unit" class="text-xl font-medium text-gray-600 ml-2">ms</span>
+                </div>
+                <p class="text-xs text-gray-400 italic mt-2">
+                    Testing against DoH resolvers
+                </p>
+            </div>
+
+            <!-- Jitter Test Card (Full Width) -->
+            <div class="bg-white rounded-xl shadow-lg p-6 md:col-span-2">
+                <div class="flex items-center mb-4">
+                    <svg class="h-6 w-6 text-teal-500 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25A1.125 1.125 0 0 1 9.75 19.875V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" />
+                    </svg>
+                    <h2 class="text-sm font-semibold text-gray-600 uppercase tracking-wider">Jitter Test</h2>
+                </div>
+                
+                <!-- Jitter Controls -->
+                <div id="jitter-controls" class="flex flex-wrap gap-3">
+                    <button data-duration="30" class="jitter-button bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg shadow transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                        Run 30 Sec Test
+                    </button>
+                    <button data-duration="60" class="jitter-button bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg shadow transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                        Run 1 Min Test
+                    </button>
+                    <button data-duration="120" class="jitter-button bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg shadow transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                        Run 2 Min Test
+                    </button>
+                </div>
+                
+                <!-- Jitter Progress -->
+                <div id="jitter-progress-container" class="mt-4 hidden">
+                    <div class="flex justify-between mb-1">
+                        <span id="jitter-status" class="text-sm font-medium text-blue-700">Running test...</span>
+                        <span id="jitter-timer" class="text-sm font-medium text-blue-700">0s</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                        <div id="jitter-progress-bar" class="bg-blue-600 h-2.5 rounded-full progress-bar" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Jitter Results -->
+                <div id="jitter-results" class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-center hidden">
+                    <div>
+                        <p class="text-xs text-gray-500 uppercase">Jitter</p>
+                        <p id="jitter-result" class="text-2xl font-bold text-gray-900">-</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500 uppercase">Avg. Latency</p>
+                        <p id="jitter-avg" class="text-2xl font-bold text-gray-900">-</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500 uppercase">Min. Latency</p>
+                        <p id="jitter-min" class="text-2xl font-bold text-gray-900">-</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500 uppercase">Max. Latency</p>
+                        <p id="jitter-max" class="text-2xl font-bold text-gray-900">-</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Agent Card (Full Width) -->
+            <div class="bg-white rounded-xl shadow-lg p-6 md:col-span-2">
+                <div class="flex items-center mb-3">
+                    <svg class="h-6 w-6 text-gray-500 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A1.875 1.875 0 0 1 18.125 22.5H5.875a1.875 1.875 0 0 1-1.374-2.382Z" />
+                    </svg>
+                    <h2 class="text-sm font-semibold text-gray-600 uppercase tracking-wider">User Agent</h2>
+                </div>
+                <p id="user-agent" class="text-sm text-gray-700 break-words">
+                    <span class="spinner inline-block align-middle"></span>
+                </p>
+            </div>
+        </main>
+
+        <!-- Footer Credit (REMOVED) -->
+        <!-- <footer class="text-center mt-8 mb-20 text-sm text-gray-500"> ... </footer> -->
+
+    </div>
+
+    <!-- Bottom Checking Message -->
+    <div id="bottom-checking-message" class="fixed bottom-0 left-0 right-0 bg-white p-3 shadow-[0_-2px_10px_rgba(0,0,0,0.1)] text-center transition-all duration-300 transform translate-y-full">
+        <div class="max-w-4xl mx-auto flex items-center justify-center">
+            <span class="spinner text-orange-600 mr-2"></span>
+            <span class="font-medium text-orange-600">Hold On! I am Checking...</span>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- DOM Elements ---
+            const statusTitle = document.getElementById('status-title');
+            const statusSubtitle = document.getElementById('status-subtitle');
+            const ipEl = document.getElementById('ip-address');
+            const ispEl = document.getElementById('isp-details');
+            const locationEl = document.getElementById('location-details');
+            const pingEl = document.getElementById('ping');
+            const pingUnitEl = document.getElementById('ping-unit');
+            const dnsEl = document.getElementById('dns-resolution');
+            const dnsUnitEl = document.getElementById('dns-unit');
+            const uaEl = document.getElementById('user-agent');
+            const loadingMessage = document.getElementById('loading-message');
+            const autoTestSelect = document.getElementById('auto-test');
+            const bottomMessage = document.getElementById('bottom-checking-message');
+            const bottomMessageSpinner = bottomMessage.querySelector('.spinner');
+            const bottomMessageText = bottomMessage.querySelector('span:last-child');
+            
+            // Jitter Elements
+            const jitterControls = document.getElementById('jitter-controls');
+            const jitterButtons = document.querySelectorAll('.jitter-button');
+            const jitterProgressContainer = document.getElementById('jitter-progress-container');
+            const jitterProgressBar = document.getElementById('jitter-progress-bar');
+            const jitterStatus = document.getElementById('jitter-status');
+            const jitterTimer = document.getElementById('jitter-timer');
+            const jitterResults = document.getElementById('jitter-results');
+            const jitterResultEl = document.getElementById('jitter-result');
+            const jitterAvgEl = document.getElementById('jitter-avg');
+            const jitterMinEl = document.getElementById('jitter-min');
+            const jitterMaxEl = document.getElementById('jitter-max');
+
+            // --- State ---
+            let pingIntervalId = null;
+            let jitterAbortController = null;
+            let currentPingRate = parseInt(autoTestSelect.value, 10);
+            
+            // Base options for all fetch requests to prevent caching
+            const baseFetchOptions = {
+                cache: 'no-store'
+            };
+
+            // --- 1. Online/Offline Status Handler ---
+            // Handles both browser online/offline events and UI updates
+            function updateOnlineStatus(isOnline = navigator.onLine) {
+                if (isOnline) {
+                    // --- GOING ONLINE ---
+                    statusTitle.textContent = 'YES!';
+                    statusTitle.classList.remove('text-red-600', 'text-orange-600');
+                    statusTitle.classList.add('text-green-600');
+                    statusSubtitle.textContent = 'Your Internet is Working!';
+                    
+                    // Set loading/checking text colors to orange (checking)
+                    loadingMessage.classList.remove('text-red-600');
+                    loadingMessage.classList.add('text-orange-600');
+                    bottomMessageSpinner.classList.remove('text-red-600');
+                    bottomMessageSpinner.classList.add('text-orange-600');
+                    bottomMessageText.classList.remove('text-red-600');
+                    bottomMessageText.classList.add('text-orange-600');
+
+                    // Relaunch the initial data load
+                    initialLoad();
+
+                } else {
+                    // --- GOING OFFLINE ---
+                    statusTitle.textContent = 'NO!';
+                    statusTitle.classList.remove('text-green-600', 'text-orange-600');
+                    statusTitle.classList.add('text-red-600');
+                    statusSubtitle.textContent = 'Your Internet is Not Working!';
+                    
+                    // Set loading/checking text colors to red (offline)
+                    loadingMessage.classList.remove('text-orange-600');
+                    loadingMessage.classList.add('text-red-600');
+                    bottomMessageSpinner.classList.remove('text-orange-600');
+                    bottomMessageSpinner.classList.add('text-red-600');
+                    bottomMessageText.classList.remove('text-orange-600');
+                    bottomMessageText.classList.add('text-red-600');
+
+                    // Stop the auto-ping interval
+                    if (pingIntervalId) {
+                        clearInterval(pingIntervalId);
+                        pingIntervalId = null;
+                    }
+
+                    // Abort any running Jitter test
+                    if (jitterAbortController) {
+                        jitterAbortController.abort();
+                    }
+
+                    // Update UI to "Offline"
+                    loadingMessage.classList.add('hidden');
+                    bottomMessage.classList.remove('translate-y-full'); // Show bottom message
+                    ipEl.textContent = 'IPV4 - Offline';
+                    ispEl.textContent = 'Offline';
+                    locationEl.textContent = 'Offline';
+                    pingEl.textContent = 'Offline';
+                    pingUnitEl.textContent = '';
+                    dnsEl.textContent = 'Offline';
+                    dnsUnitEl.textContent = '';
+                }
+            }
+
+            // --- 2. Get IP Address & GeoIP Info (Robust Fallback) ---
+            async function getIPAndGeo() {
+                let ip = null;
+                try {
+                    // Step 1: Get IP from api.ipify.org. This is extremely reliable.
+                    const ipResponse = await fetch('https://api.ipify.org?format=json', baseFetchOptions);
+                    if (!ipResponse.ok) throw new Error('Failed to fetch IP');
+                    const ipData = await ipResponse.json();
+                    ip = ipData.ip;
+                    ipEl.textContent = `IPV4 - ${ip}`;
+                } catch (error) {
+                    console.error('Failed to fetch IP:', error);
+                    ipEl.textContent = 'IPV4 - Unavailable';
+                    ispEl.textContent = 'Unavailable';
+                    locationEl.textContent = 'Unavailable';
+                    return; // Stop if we can't get the IP
+                }
+
+                // Step 2: Try to get Geo/ISP from ipapi.co (Primary source)
+                try {
+                    const geoResponse = await fetch(`https://ipapi.co/${ip}/json/`, baseFetchOptions);
+                    if (!geoResponse.ok) throw new Error('ipapi.co failed or blocked');
+                    const data = await geoResponse.json();
+                    if (data.error) throw new Error(data.reason);
+
+                    ispEl.textContent = data.org || 'N/A'; // 'org' is often the ISP
+                    locationEl.textContent = `${data.city || 'N/A'}, ${data.region || 'N/A'}, ${data.country_code || 'N/A'}`;
+                
+                } catch (error) {
+                    console.warn('Primary GeoIP (ipapi.co) failed:', error.message, 'Trying fallback...');
+                    
+                    // Step 3: Fallback to freeipapi.com
+                    try {
+                        const fallbackResponse = await fetch(`https://freeipapi.com/api/json/${ip}`, baseFetchOptions);
+                        if (!fallbackResponse.ok) throw new Error('Fallback GeoIP failed');
+                        const data = await fallbackResponse.json();
+
+                        ispEl.textContent = data.ispName || 'N/A';
+                        locationEl.textContent = `${data.cityName || 'N/A'}, ${data.regionName || 'N/A'}, ${data.countryCode || 'N/A'}`;
+
+                    } catch (fallbackError) {
+                        console.error('Fallback GeoIP (freeipapi.com) also failed:', fallbackError);
+                        ispEl.textContent = 'Unavailable';
+                        locationEl.textContent = 'Unavailable';
+                    }
+                }
+            }
+
+            // --- 3. Get User Agent ---
+            async function getUserAgent() {
+                uaEl.textContent = navigator.userAgent;
+            }
+
+            // --- 4. Improved Ping & DNS ---
+
+            // Utility: median
+            // Gets the median value from an array, which is more stable than an average
+            function median(arr){ if(!arr || !arr.length) return null; const s = [...arr].sort((a,b)=>a-b); const mid = Math.floor(s.length/2); return s.length%2 ? s[mid] : Math.round((s[mid-1]+s[mid])/2); }
+
+            // A set of reliable, small endpoints used for browser-friendly ping measurements.
+            // These are geographically distributed.
+            const PING_ENDPOINTS = [
+                { name: 'google204', url: 'https://www.google.com/generate_204' },
+                { name: 'clients3', url: 'https://clients3.google.com/generate_204' },
+                { name: 'cloudflare-trace', url: 'https://cloudflare-dns.com/cdn-cgi/trace' }
+            ];
+
+            // DoH (DNS over HTTPS) resolvers for DNS timing
+            const DOH_RESOLVERS = [
+                { name: 'Cloudflare', url: 'https://cloudflare-dns.com/dns-query?name=google.com&type=A', accept: 'application/dns-json' },
+                { name: 'Google', url: 'https://dns.google/resolve?name=google.com&type=A', accept: 'application/dns-json' }
+            ];
+
+            // measure a single fetch RTT (returns ms or null)
+            async function measureFetchRTT(url, opts = {}) {
+                const start = performance.now();
+                try {
+                    // append cache-buster
+                    const sep = url.includes('?') ? '&' : '?';
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 1900); // 1.9s timeout, < 2s interval
+                    
+                    const response = await fetch(url + sep + '_=' + Date.now(), { 
+                        ...opts, 
+                        cache: 'no-store', 
+                        mode: 'cors', 
+                        signal: controller.signal
+                    });
+                    
+                    clearTimeout(timeoutId);
+                    
+                    // try to read small body to ensure full round-trip
+                    try { await response.text(); } catch(e) { /* ignore */ }
+                    const end = performance.now();
+                    return Math.round(end - start);
+                } catch (e) {
+                    return null;
+                }
+            }
+
+            // measure endpoint multiple times and return median (or null)
+            async function measureEndpointMedian(url, attempts = 3, opts = {}) {
+                const times = [];
+                for (let i = 0; i < attempts; i++) {
+                    const t = await measureFetchRTT(url, opts);
+                    if (t !== null) times.push(t);
+                    // small delay to avoid bursts
+                    await new Promise(r => setTimeout(r, 100));
+                }
+                return times.length ? median(times) : null;
+            }
+
+            // Replaces original getPingLatency: measures multiple endpoints and returns median across them
+            // This gives a much more accurate "local" ping
+            async function getPingLatency() {
+                try {
+                    const results = [];
+                    for (const ep of PING_ENDPOINTS) {
+                        const t = await measureEndpointMedian(ep.url, 3);
+                        results.push({ name: ep.name, ms: t });
+                    }
+                    const valid = results.filter(r => r.ms !== null).map(r => r.ms);
+                    if (!valid.length) {
+                        // Fallback to old reliable method if all CDNs fail
+                        return await measureFetchRTT('https://api.ipify.org?format=json');
+                    }
+                    // Aggregate: use median across endpoints (less sensitive to outliers)
+                    return median(valid);
+                } catch (e) {
+                    console.error('getPingLatency error', e);
+                    return null;
+                }
+            }
+
+            // Replaces original getDnsLatency: measures DoH resolvers and returns median
+            async function getDnsLatency() {
+                try {
+                    const results = [];
+                    for (const r of DOH_RESOLVERS) {
+                        const opts = { headers: { 'Accept': r.accept }, cache: 'no-store', mode: 'cors' };
+                        const t = await measureEndpointMedian(r.url, 2, opts);
+                        results.push({ name: r.name, ms: t });
+                    }
+                    const valid = results.filter(r => r.ms !== null).map(r => r.ms);
+                    if (!valid.length) return null;
+                    return median(valid);
+                } catch (e) {
+                    console.error('getDnsLatency error', e);
+                    return null;
+                }
+            }
+
+            // --- 6. Check Ping (Updates the DOM) ---
+            async function checkPing() {
+                // FAULT TOLERANCE: Don't run if offline
+                if (!navigator.onLine) return;
+                
+                // --- START: Set state to "WAIT!" during reload ---
+                statusTitle.textContent = 'WAIT!';
+                statusSubtitle.textContent = 'Checking...';
+                statusTitle.classList.remove('text-green-600', 'text-red-600');
+                statusTitle.classList.add('text-orange-600');
+                bottomMessage.classList.remove('translate-y-full'); // Show "Checking..."
+                // --- END: Set state to "WAIT!" ---
+
+                const latency = await getPingLatency();
+                
+                // --- START: Restore state after reload ---
+                if (navigator.onLine) {
+                    statusTitle.textContent = 'YES!';
+                    statusSubtitle.textContent = 'Your Internet is Working!';
+                    statusTitle.classList.remove('text-orange-600');
+                    statusTitle.classList.add('text-green-600');
+                }
+                bottomMessage.classList.add('translate-y-full'); // Hide "Checking..."
+                // --- END: Restore state ---
+
+                if (latency !== null) {
+                    pingEl.textContent = latency;
+                    pingUnitEl.textContent = 'ms';
+                } else {
+                    pingEl.textContent = 'Failed';
+                    pingUnitEl.textContent = '';
+                }
+            }
+
+            // --- 7. Check DNS Resolution (Updates the DOM) ---
+            async function checkDnsResolution() {
+                if (!navigator.onLine) return;
+                
+                const latency = await getDnsLatency();
+
+                if (latency !== null) {
+                    dnsEl.textContent = latency;
+                    dnsUnitEl.textContent = 'ms';
+                } else {
+                    dnsEl.textContent = 'Failed';
+                    dnsUnitEl.textContent = '';
+                }
+            }
+
+
+            // --- 8. Start/Update Ping Interval ---
+            function startPingInterval(rate) {
+                // Clear any existing interval
+                if (pingIntervalId) {
+                    clearInterval(pingIntervalId);
+                }
+                currentPingRate = parseInt(rate, 10);
+                pingIntervalId = setInterval(checkPing, currentPingRate);
+            }
+
+            // --- 9. Jitter Test Logic ---
+            function calculateJitterStats(latencies) {
+                if (!latencies || latencies.length < 2) {
+                    return { jitter: 0, avg: 0, min: 0, max: 0 };
+                }
+
+                let jitters = [];
+                let sum = latencies[0];
+                let min = latencies[0];
+                let max = latencies[0];
+
+                for (let i = 1; i < latencies.length; i++) {
+                    let diff = Math.abs(latencies[i] - latencies[i-1]);
+                    jitters.push(diff);
+                    sum += latencies[i];
+                    if (latencies[i] < min) min = latencies[i];
+                    if (latencies[i] > max) max = latencies[i];
+                }
+
+                const jitterSum = jitters.reduce((a, b) => a + b, 0);
+                const avgJitter = jitterSum / jitters.length;
+                const avgLatency = sum / latencies.length;
+
+                return {
+                    jitter: Math.round(avgJitter),
+                    avg: Math.round(avgLatency),
+                    min: min,
+                    max: max
+                };
+            }
+
+            async function runJitterTest(durationSeconds) {
+                // FAULT TOLERANCE: Don't run if offline
+                if (!navigator.onLine) {
+                    alert('Cannot start test while offline.');
+                    return;
+                }
+                
+                // Abort any previous test
+                if (jitterAbortController) {
+                    jitterAbortController.abort();
+                }
+                jitterAbortController = new AbortController();
+
+                // Setup UI
+                jitterButtons.forEach(btn => btn.disabled = true);
+                jitterResults.classList.add('hidden');
+                jitterProgressContainer.classList.remove('hidden');
+                jitterStatus.textContent = 'Running test...';
+                
+                const pingsPerSecond = 2; // Run ping 2 times per second
+                let latencies = [];
+                const intervalTime = 1000 / pingsPerSecond;
+                const startTime = Date.now();
+
+                const testInterval = setInterval(async () => {
+                    // FAULT TOLERANCE: Stop if we go offline during the test
+                    if (!navigator.onLine) {
+                        jitterAbortController.abort();
+                        return;
+                    }
+
+                    // Use the same robust getPingLatency function for the jitter test
+                    const latency = await getPingLatency();
+                    if (latency !== null) {
+                        latencies.push(latency);
+                    }
+
+                    const elapsedTime = (Date.now() - startTime) / 1000;
+                    const progress = Math.min((elapsedTime / durationSeconds) * 100, 100);
+                    jitterProgressBar.style.width = `${progress}%`;
+                    jitterTimer.textContent = `${Math.round(elapsedTime)}s / ${durationSeconds}s`;
+
+                    if (elapsedTime >= durationSeconds) {
+                        clearInterval(testInterval);
+                        jitterAbortController = null; // Test finished
+
+                        // Calculate and display results
+                        const stats = calculateJitterStats(latencies);
+                        jitterResultEl.textContent = `${stats.jitter} ms`;
+                        jitterAvgEl.textContent = `${stats.avg} ms`;
+                        jitterMinEl.textContent = `${stats.min} ms`;
+                        jitterMaxEl.textContent = `${stats.max} ms`;
+                        
+                        jitterResults.classList.remove('hidden');
+                        jitterProgressContainer.classList.add('hidden');
+                        jitterButtons.forEach(btn => btn.disabled = false);
+                        jitterStatus.textContent = 'Test complete';
+                    }
+
+                }, intervalTime);
+
+                // Handle manual abort or offline abort
+                jitterAbortController.signal.addEventListener('abort', () => {
+                    clearInterval(testInterval);
+                    jitterAbortController = null;
+                    jitterButtons.forEach(btn => btn.disabled = false);
+                    jitterProgressContainer.classList.add('hidden');
+                    
+                    // Show "Test Aborted (Offline)" if we went offline
+                    if(!navigator.onLine) {
+                        jitterStatus.textContent = 'Test Aborted (Offline)';
+                    } else {
+                        jitterStatus.textContent = 'Test Aborted';
+                    }
+                });
+            }
+
+            // --- 10. Initial Load Function ---
+            async function initialLoad() {
+                // Make sure we're online
+                if (!navigator.onLine) {
+                    updateOnlineStatus(false);
+                    return;
+                }
+                
+                loadingMessage.classList.remove('hidden');
+
+                // Run all initial checks in parallel for speed
+                await Promise.allSettled([
+                    getIPAndGeo(),
+                    checkPing(),
+                    checkDnsResolution(),
+                    getUserAgent(),
+                ]);
+
+                // Hide loading message after all initial loads are done
+                loadingMessage.classList.add('hidden');
+
+                // Start the auto-ping interval
+                startPingInterval(currentPingRate);
+            }
+
+            // --- 11. Event Listeners ---
+            
+            // Online/Offline listeners
+            window.addEventListener('online', () => updateOnlineStatus(true));
+            window.addEventListener('offline', () => updateOnlineStatus(false));
+
+            // Auto-test select listener
+            autoTestSelect.addEventListener('change', (e) => {
+                startPingInterval(e.target.value);
+            });
+
+            // Jitter test button listeners
+            jitterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const duration = parseInt(button.getAttribute('data-duration'), 10);
+                    runJitterTest(duration);
+                });
+            });
+
+            // Run initial checks on page load
+            initialLoad();
+        });
+    </script>
+</body>
+</html>
