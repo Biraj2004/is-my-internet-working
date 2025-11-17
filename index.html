@@ -75,7 +75,7 @@
             <p id="status-subtitle" class="text-xl md:text-2xl font-medium text-gray-600">Your Internet is Working!</p>
             
             <!-- Loading Message (Initial) - Positioned ABOVE the timer -->
-            <p id="loading-message" class="text-lg font-medium text-orange-600 mt-4 flex items-center justify-center space-x-2">
+            <p id="loading-message" class="text-lg font-medium text-blue-600 mt-4 flex items-center justify-center space-x-2">
                 <span class="spinner"></span>
                 <span>Hold On! I am Checking...</span>
             </p>
@@ -232,8 +232,8 @@
     <!-- Bottom Checking Message -->
     <div id="bottom-checking-message" class="fixed bottom-0 left-0 right-0 bg-white p-3 shadow-[0_-2px_10px_rgba(0,0,0,0.1)] text-center transition-all duration-300 transform translate-y-full">
         <div class="max-w-4xl mx-auto flex items-center justify-center">
-            <span class="spinner text-orange-600 mr-2"></span>
-            <span class="font-medium text-orange-600">Hold On! I am Checking...</span>
+            <span class="spinner text-blue-600 mr-2"></span>
+            <span class="font-medium text-blue-600">Hold On! I am Checking...</span>
         </div>
     </div>
 
@@ -285,17 +285,17 @@
                 if (isOnline) {
                     // --- GOING ONLINE ---
                     statusTitle.textContent = 'YES!';
-                    statusTitle.classList.remove('text-red-600', 'text-orange-600');
+                    statusTitle.classList.remove('text-red-600', 'text-blue-600');
                     statusTitle.classList.add('text-green-600');
                     statusSubtitle.textContent = 'Your Internet is Working!';
                     
-                    // Set loading/checking text colors to orange (checking)
+                    // Set loading/checking text colors to blue (checking)
                     loadingMessage.classList.remove('text-red-600');
-                    loadingMessage.classList.add('text-orange-600');
+                    loadingMessage.classList.add('text-blue-600');
                     bottomMessageSpinner.classList.remove('text-red-600');
-                    bottomMessageSpinner.classList.add('text-orange-600');
+                    bottomMessageSpinner.classList.add('text-blue-600');
                     bottomMessageText.classList.remove('text-red-600');
-                    bottomMessageText.classList.add('text-orange-600');
+                    bottomMessageText.classList.add('text-blue-600');
 
                     // Relaunch the initial data load
                     initialLoad();
@@ -303,16 +303,16 @@
                 } else {
                     // --- GOING OFFLINE ---
                     statusTitle.textContent = 'NO!';
-                    statusTitle.classList.remove('text-green-600', 'text-orange-600');
+                    statusTitle.classList.remove('text-green-600', 'text-blue-600');
                     statusTitle.classList.add('text-red-600');
                     statusSubtitle.textContent = 'Your Internet is Not Working!';
                     
                     // Set loading/checking text colors to red (offline)
-                    loadingMessage.classList.remove('text-orange-600');
+                    loadingMessage.classList.remove('text-blue-600');
                     loadingMessage.classList.add('text-red-600');
-                    bottomMessageSpinner.classList.remove('text-orange-600');
+                    bottomMessageSpinner.classList.remove('text-blue-600');
                     bottomMessageSpinner.classList.add('text-red-600');
-                    bottomMessageText.classList.remove('text-orange-600');
+                    bottomMessageText.classList.remove('text-blue-600');
                     bottomMessageText.classList.add('text-red-600');
 
                     // Stop the auto-ping interval
@@ -501,7 +501,7 @@
                 statusTitle.textContent = 'WAIT!';
                 statusSubtitle.textContent = 'Checking...';
                 statusTitle.classList.remove('text-green-600', 'text-red-600');
-                statusTitle.classList.add('text-orange-600');
+                statusTitle.classList.add('text-blue-600');
                 bottomMessage.classList.remove('translate-y-full'); // Show "Checking..."
                 // --- END: Set state to "WAIT!" ---
 
@@ -511,7 +511,7 @@
                 if (navigator.onLine) {
                     statusTitle.textContent = 'YES!';
                     statusSubtitle.textContent = 'Your Internet is Working!';
-                    statusTitle.classList.remove('text-orange-600');
+                    statusTitle.classList.remove('text-blue-600');
                     statusTitle.classList.add('text-green-600');
                 }
                 bottomMessage.classList.add('translate-y-full'); // Hide "Checking..."
@@ -710,3 +710,4 @@
     </script>
 </body>
 </html>
+
