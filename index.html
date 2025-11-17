@@ -4,17 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Internet Status Checker</title>
-    <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Use Inter font family -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Add Flaticon Stylesheet for the new icon -->
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.4.0/uicons-thin-solid/css/uicons-thin-solid.css'>
     
-    <!-- Set Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><path fill=%22%232563eb%22 d=%22M12,0A12,12,0,1,0,24,12,12.013,12.013,0,0,0,12,0ZM11.25,1.5a10.5,10.5,0,1,1,0,21c-5.185,0-9.44-3.93-10.395-9H10.5V1.536A10.435,10.435,0,0,1,11.25,1.5ZM12.75,1.536V13.5h9.864A10.5,10.5,0,0,0,12.75,1.536Z%22/></svg>">
 
     <style>
@@ -52,14 +48,12 @@
 
     <div class="max-w-4xl mx-auto">
         
-        <!-- App Title & Credits Header -->
         <header class="mb-4 flex justify-between items-center">
             <h1 class="text-2xl font-bold text-blue-600">My-Internet-Tester</h1>
             
             <div class="text-sm text-gray-500">
                 Created by <a href="https://github.com/Biraj2004" target="_blank" rel="noopener noreferrer" class="font-medium text-blue-600 hover:underline inline-flex items-center space-x-1.5">
                     <span class="font-bold">Biraj Sarkar</span>
-                    <!-- GitHub Icon -->
                     <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 16 16">
                         <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.22.48-2.69-1.07-2.69-1.07-.36-.92-.89-1.17-.89-1.17-.73-.5.05-.49.05-.49.81.06 1.23.83 1.23.83.72 1.22 1.89.87 2.35.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.19 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
                     </svg>
@@ -67,25 +61,19 @@
             </div>
         </header>
         
-        <!-- Main Status -->
-        <div class="text-center mb-6"> <!-- Polished: Increased bottom margin -->
-            <h1 id="status-title" class="text-7xl md:text-8xl font-extrabold text-green-600 transition-colors duration-300">
+        <div class="text-center mb-6"> <h1 id="status-title" class="text-7xl md:text-8xl font-extrabold text-green-600 transition-colors duration-300">
                 YES!
             </h1>
             <p id="status-subtitle" class="text-xl md:text-2xl font-medium text-gray-600">Your Internet is Working!</p>
             
-            <!-- Loading Message (Initial) - Positioned ABOVE the timer -->
             <p id="loading-message" class="text-lg font-medium text-blue-600 mt-4 flex items-center justify-center space-x-2">
                 <span class="spinner"></span>
                 <span>Hold On! I am Checking...</span>
             </p>
 
-            <!-- Auto Test Dropdown - Positioned BELOW the loading message -->
             <div class="mt-4">
-                <!-- Capitalized "Auto-Test" -->
                 <label for="auto-test" class="text-sm font-medium text-gray-500 mr-2">Auto-Test:</label>
                 <select id="auto-test" class="rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                    <!-- Removed 2sec, Added 30sec -->
                     <option value="3000">3 sec</option>
                     <option value="5000">5 sec</option>
                     <option value="10000">10 sec</option>
@@ -95,15 +83,14 @@
             </div>
         </div>
 
-        <!-- Data Grid -->
         <main class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
             
-            <!-- Network Statistics Card (Full Width) -->
             <div class="bg-white rounded-xl shadow-lg p-6 md:col-span-2">
                 <div class="flex items-center justify-between mb-3">
                     <div class="flex items-center">
-                        <!-- Replaced SVG with Flaticon icon -->
-                        <i class="fi fi-ts-worldwide-network text-2xl text-blue-500 mr-3"></i>
+                        <svg class="h-6 w-6 text-blue-600 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25A1.125 1.125 0 0 1 9.75 19.875V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" />
+                        </svg>
                         <h2 class="text-sm font-semibold text-gray-600 uppercase tracking-wider">Network Statistics</h2>
                     </div>
                 </div>
@@ -122,7 +109,6 @@
                 </div>
             </div>
 
-            <!-- Ping Card -->
             <div class="bg-white rounded-xl shadow-lg p-6">
                 <div class="flex items-center mb-3">
                     <svg class="h-6 w-6 text-red-500 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -141,7 +127,6 @@
                 </p>
             </div>
 
-            <!-- DNS Resolution Card -->
             <div class="bg-white rounded-xl shadow-lg p-6">
                 <div class="flex items-center mb-3">
                     <svg class="h-6 w-6 text-purple-500 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -160,7 +145,6 @@
                 </p>
             </div>
 
-            <!-- Jitter Test Card (Full Width) -->
             <div class="bg-white rounded-xl shadow-lg p-6 md:col-span-2">
                 <div class="flex items-center mb-4">
                     <svg class="h-6 w-6 text-teal-500 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -169,7 +153,6 @@
                     <h2 class="text-sm font-semibold text-gray-600 uppercase tracking-wider">Jitter Test</h2>
                 </div>
                 
-                <!-- Jitter Controls -->
                 <div id="jitter-controls" class="flex flex-wrap gap-3">
                     <button data-duration="30" class="jitter-button bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg shadow transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
                         Run 30 Sec Test
@@ -182,7 +165,6 @@
                     </button>
                 </div>
                 
-                <!-- Jitter Progress -->
                 <div id="jitter-progress-container" class="mt-4 hidden">
                     <div class="flex justify-between mb-1">
                         <span id="jitter-status" class="text-sm font-medium text-blue-700">Running test...</span>
@@ -193,7 +175,6 @@
                     </div>
                 </div>
 
-                <!-- Jitter Results -->
                 <div id="jitter-results" class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-center hidden">
                     <div>
                         <p class="text-xs text-gray-500 uppercase">Jitter</p>
@@ -214,7 +195,6 @@
                 </div>
             </div>
 
-            <!-- User Agent Card (Full Width) -->
             <div class="bg-white rounded-xl shadow-lg p-6 md:col-span-2">
                 <div class="flex items-center mb-3">
                     <svg class="h-6 w-6 text-gray-500 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -229,7 +209,6 @@
         </main>
     </div>
 
-    <!-- Bottom Checking Message -->
     <div id="bottom-checking-message" class="fixed bottom-0 left-0 right-0 bg-white p-3 shadow-[0_-2px_10px_rgba(0,0,0,0.1)] text-center transition-all duration-300 transform translate-y-full">
         <div class="max-w-4xl mx-auto flex items-center justify-center">
             <span class="spinner text-blue-600 mr-2"></span>
@@ -270,9 +249,10 @@
             const jitterMaxEl = document.getElementById('jitter-max');
 
             // --- State ---
-            let pingIntervalId = null;
+            let pingIntervalId = null; // Renamed from autoCheckIntervalId for clarity
             let jitterAbortController = null;
             let currentPingRate = parseInt(autoTestSelect.value, 10);
+            let isFirstLoad = true; // Flag for first-time data fetch
             
             // Base options for all fetch requests to prevent caching
             const baseFetchOptions = {
@@ -280,7 +260,6 @@
             };
 
             // --- 1. Online/Offline Status Handler ---
-            // Handles both browser online/offline events and UI updates
             function updateOnlineStatus(isOnline = navigator.onLine) {
                 if (isOnline) {
                     // --- GOING ONLINE ---
@@ -297,8 +276,8 @@
                     bottomMessageText.classList.remove('text-red-600');
                     bottomMessageText.classList.add('text-blue-600');
 
-                    // Relaunch the initial data load
-                    initialLoad();
+                    // Relaunch the auto-check loop
+                    startAutoCheckLoop(currentPingRate);
 
                 } else {
                     // --- GOING OFFLINE ---
@@ -314,6 +293,7 @@
                     bottomMessageSpinner.classList.add('text-red-600');
                     bottomMessageText.classList.remove('text-blue-600');
                     bottomMessageText.classList.add('text-red-600');
+                    bottomMessageText.textContent = 'You are offline.';
 
                     // Stop the auto-ping interval
                     if (pingIntervalId) {
@@ -336,6 +316,9 @@
                     pingUnitEl.textContent = '';
                     dnsEl.textContent = 'Offline';
                     dnsUnitEl.textContent = '';
+                    
+                    // Reset isFirstLoad flag so it re-fetches IP/Geo on recovery
+                    isFirstLoad = true;
                 }
             }
 
@@ -343,7 +326,7 @@
             async function getIPAndGeo() {
                 let ip = null;
                 try {
-                    // Step 1: Get IP from api.ipify.org. This is extremely reliable.
+                    // Step 1: Get IP from api.ipify.org.
                     const ipResponse = await fetch('https://api.ipify.org?format=json', baseFetchOptions);
                     if (!ipResponse.ok) throw new Error('Failed to fetch IP');
                     const ipData = await ipResponse.json();
@@ -395,18 +378,14 @@
             // --- 4. Improved Ping & DNS ---
 
             // Utility: median
-            // Gets the median value from an array, which is more stable than an average
             function median(arr){ if(!arr || !arr.length) return null; const s = [...arr].sort((a,b)=>a-b); const mid = Math.floor(s.length/2); return s.length%2 ? s[mid] : Math.round((s[mid-1]+s[mid])/2); }
 
-            // A set of reliable, small endpoints used for browser-friendly ping measurements.
-            // These are geographically distributed.
             const PING_ENDPOINTS = [
                 { name: 'google204', url: 'https://www.google.com/generate_204' },
                 { name: 'clients3', url: 'https://clients3.google.com/generate_204' },
                 { name: 'cloudflare-trace', url: 'https://cloudflare-dns.com/cdn-cgi/trace' }
             ];
 
-            // DoH (DNS over HTTPS) resolvers for DNS timing
             const DOH_RESOLVERS = [
                 { name: 'Cloudflare', url: 'https://cloudflare-dns.com/dns-query?name=google.com&type=A', accept: 'application/dns-json' },
                 { name: 'Google', url: 'https://dns.google/resolve?name=google.com&type=A', accept: 'application/dns-json' }
@@ -416,9 +395,7 @@
             async function measureFetchRTT(url, opts = {}) {
                 const start = performance.now();
                 try {
-                    // append cache-buster
                     const sep = url.includes('?') ? '&' : '?';
-                    // Set a timeout shorter than the lowest ping interval (3sec)
                     const controller = new AbortController();
                     const timeoutId = setTimeout(() => controller.abort(), 2500); // 2.5s timeout
                     
@@ -431,7 +408,6 @@
                     
                     clearTimeout(timeoutId);
                     
-                    // try to read small body to ensure full round-trip
                     try { await response.text(); } catch(e) { /* ignore */ }
                     const end = performance.now();
                     return Math.round(end - start);
@@ -446,14 +422,12 @@
                 for (let i = 0; i < attempts; i++) {
                     const t = await measureFetchRTT(url, opts);
                     if (t !== null) times.push(t);
-                    // small delay to avoid bursts
-                    await new Promise(r => setTimeout(r, 100));
+                    await new Promise(r => setTimeout(r, 100)); // small delay
                 }
                 return times.length ? median(times) : null;
             }
 
-            // Replaces original getPingLatency: measures multiple endpoints and returns median across them
-            // This gives a much more accurate "local" ping
+            // Replaces original getPingLatency: measures multiple endpoints
             async function getPingLatency() {
                 try {
                     const results = [];
@@ -463,10 +437,8 @@
                     }
                     const valid = results.filter(r => r.ms !== null).map(r => r.ms);
                     if (!valid.length) {
-                        // Fallback to old reliable method if all CDNs fail
                         return await measureFetchRTT('https://api.ipify.org?format=json');
                     }
-                    // Aggregate: use median across endpoints (less sensitive to outliers)
                     return median(valid);
                 } catch (e) {
                     console.error('getPingLatency error', e);
@@ -474,7 +446,7 @@
                 }
             }
 
-            // Replaces original getDnsLatency: measures DoH resolvers and returns median
+            // Replaces original getDnsLatency: measures DoH resolvers
             async function getDnsLatency() {
                 try {
                     const results = [];
@@ -492,67 +464,106 @@
                 }
             }
 
-            // --- 6. Check Ping (Updates the DOM) ---
-            async function checkPing() {
-                // FAULT TOLERANCE: Don't run if offline
-                if (!navigator.onLine) return;
-                
-                // --- START: Set state to "WAIT!" during reload ---
-                statusTitle.textContent = 'WAIT!';
-                statusSubtitle.textContent = 'Checking...';
-                statusTitle.classList.remove('text-green-600', 'text-red-600');
-                statusTitle.classList.add('text-blue-600');
-                bottomMessage.classList.remove('translate-y-full'); // Show "Checking..."
-                // --- END: Set state to "WAIT!" ---
-
-                const latency = await getPingLatency();
-                
-                // --- START: Restore state after reload ---
-                if (navigator.onLine) {
-                    statusTitle.textContent = 'YES!';
-                    statusSubtitle.textContent = 'Your Internet is Working!';
-                    statusTitle.classList.remove('text-blue-600');
-                    statusTitle.classList.add('text-green-600');
-                }
-                bottomMessage.classList.add('translate-y-full'); // Hide "Checking..."
-                // --- END: Restore state ---
-
-                if (latency !== null) {
-                    pingEl.textContent = latency;
-                    pingUnitEl.textContent = 'ms';
-                } else {
-                    pingEl.textContent = 'Failed';
-                    pingUnitEl.textContent = '';
-                }
-            }
-
-            // --- 7. Check DNS Resolution (Updates the DOM) ---
-            async function checkDnsResolution() {
-                if (!navigator.onLine) return;
-                
-                const latency = await getDnsLatency();
-
-                if (latency !== null) {
-                    dnsEl.textContent = latency;
-                    dnsUnitEl.textContent = 'ms';
-                } else {
-                    dnsEl.textContent = 'Failed';
-                    dnsUnitEl.textContent = '';
-                }
-            }
-
-
-            // --- 8. Start/Update Ping Interval ---
-            function startPingInterval(rate) {
+            // --- 5. Start/Update Auto-Check Loop (NEW LOGIC) ---
+            function startAutoCheckLoop(rate) {
                 // Clear any existing interval
                 if (pingIntervalId) {
                     clearInterval(pingIntervalId);
                 }
                 currentPingRate = parseInt(rate, 10);
-                pingIntervalId = setInterval(checkPing, currentPingRate);
+
+                // This function is the new "main loop"
+                const runCheckCycle = async () => {
+                    // 0. Skip if jitter test is running
+                    if (jitterAbortController) {
+                        console.log("Auto-check paused during jitter test.");
+                        return;
+                    }
+                    
+                    // 1. Show "WAIT!" state (per your request)
+                    statusTitle.textContent = 'WAIT!';
+                    statusSubtitle.textContent = 'Checking again soon...'; // Your requested text
+                    statusTitle.classList.remove('text-green-600', 'text-red-600');
+                    statusTitle.classList.add('text-blue-600');
+                    
+                    bottomMessage.classList.remove('translate-y-full');
+                    bottomMessageText.textContent = 'Hold On! I am Checking...';
+                    
+                    if (isFirstLoad) {
+                        loadingMessage.classList.add('hidden');
+                    }
+
+                    // 2. Run probes immediately
+                    const latency = await getPingLatency();
+                    const dnsLatency = await getDnsLatency(); // Run DNS probe too
+
+                    // 3. Update UI based on probe results
+                    // Check browser status *again* in case it changed during the await
+                    if (!navigator.onLine) {
+                        updateOnlineStatus(false);
+                        return;
+                    }
+
+                    if (latency !== null) {
+                        // --- SUCCESS STATE ---
+                        statusTitle.textContent = 'YES!';
+                        statusSubtitle.textContent = 'Your Internet is Working!';
+                        statusTitle.classList.remove('text-blue-600');
+                        statusTitle.classList.add('text-green-600');
+                        
+                        pingEl.textContent = latency;
+                        pingUnitEl.textContent = 'ms';
+                        
+                        if (dnsLatency !== null) {
+                            dnsEl.textContent = dnsLatency;
+                            dnsUnitEl.textContent = 'ms';
+                        } else {
+                            dnsEl.textContent = 'Failed';
+                            dnsUnitEl.textContent = '';
+                        }
+
+                        if (isFirstLoad) {
+                            await getIPAndGeo(); // Wait for IP/Geo
+                            getUserAgent();
+                        }
+                    } else {
+                        // --- FAILURE STATE (Active Probe Failed) ---
+                        statusTitle.textContent = 'NO!';
+                        statusSubtitle.textContent = 'Internet Not Working';
+                        statusTitle.classList.remove('text-blue-600');
+                        statusTitle.classList.add('text-red-600');
+                        
+                        pingEl.textContent = 'Failed';
+                        pingUnitEl.textContent = '';
+                        dnsEl.textContent = 'Failed';
+                        dnsUnitEl.textContent = '';
+                        
+                        if (isFirstLoad) {
+                            // On first fail, show unavailable/offline
+                            ipEl.textContent = 'IPV4 - Unavailable';
+                            ispEl.textContent = 'Unavailable';
+                            locationEl.textContent = 'Unavailable';
+                            getUserAgent(); // UA is local
+                        }
+                    }
+                    
+                    // Hide bottom "Checking..." message
+                    bottomMessage.classList.add('translate-y-full');
+
+                    // Mark first load as complete
+                    if (isFirstLoad) {
+                        isFirstLoad = false;
+                    }
+                };
+                
+                // Run the check *immediately* on first call
+                runCheckCycle(); 
+                
+                // Then set the interval for all *subsequent* checks
+                pingIntervalId = setInterval(runCheckCycle, currentPingRate);
             }
 
-            // --- 9. Jitter Test Logic ---
+            // --- 6. Jitter Test Logic ---
             function calculateJitterStats(latencies) {
                 if (!latencies || latencies.length < 2) {
                     return { jitter: 0, avg: 0, min: 0, max: 0 };
@@ -584,13 +595,11 @@
             }
 
             async function runJitterTest(durationSeconds) {
-                // FAULT TOLERANCE: Don't run if offline
                 if (!navigator.onLine) {
                     alert('Cannot start test while offline.');
                     return;
                 }
                 
-                // Abort any previous test
                 if (jitterAbortController) {
                     jitterAbortController.abort();
                 }
@@ -602,19 +611,17 @@
                 jitterProgressContainer.classList.remove('hidden');
                 jitterStatus.textContent = 'Running test...';
                 
-                const pingsPerSecond = 2; // Run ping 2 times per second
+                const pingsPerSecond = 2;
                 let latencies = [];
                 const intervalTime = 1000 / pingsPerSecond;
                 const startTime = Date.now();
 
                 const testInterval = setInterval(async () => {
-                    // FAULT TOLERANCE: Stop if we go offline during the test
                     if (!navigator.onLine) {
                         jitterAbortController.abort();
                         return;
                     }
 
-                    // Use the same robust getPingLatency function for the jitter test
                     const latency = await getPingLatency();
                     if (latency !== null) {
                         latencies.push(latency);
@@ -651,7 +658,6 @@
                     jitterButtons.forEach(btn => btn.disabled = false);
                     jitterProgressContainer.classList.add('hidden');
                     
-                    // Show "Test Aborted (Offline)" if we went offline
                     if(!navigator.onLine) {
                         jitterStatus.textContent = 'Test Aborted (Offline)';
                     } else {
@@ -660,32 +666,23 @@
                 });
             }
 
-            // --- 10. Initial Load Function ---
+            // --- 7. Initial Load Function ---
             async function initialLoad() {
-                // Make sure we're online
+                // Check browser status first
                 if (!navigator.onLine) {
                     updateOnlineStatus(false);
                     return;
                 }
                 
+                // Show initial loading message
                 loadingMessage.classList.remove('hidden');
-
-                // Run all initial checks in parallel for speed
-                await Promise.allSettled([
-                    getIPAndGeo(),
-                    checkPing(),
-                    checkDnsResolution(),
-                    getUserAgent(),
-                ]);
-
-                // Hide loading message after all initial loads are done
-                loadingMessage.classList.add('hidden');
-
-                // Start the auto-ping interval
-                startPingInterval(currentPingRate);
+                
+                // Start the loop. The loop's first run will
+                // hide the loading message and fetch all data.
+                startAutoCheckLoop(currentPingRate);
             }
 
-            // --- 11. Event Listeners ---
+            // --- 8. Event Listeners ---
             
             // Online/Offline listeners
             window.addEventListener('online', () => updateOnlineStatus(true));
@@ -693,7 +690,7 @@
 
             // Auto-test select listener
             autoTestSelect.addEventListener('change', (e) => {
-                startPingInterval(e.target.value);
+                startAutoCheckLoop(e.target.value);
             });
 
             // Jitter test button listeners
@@ -710,4 +707,3 @@
     </script>
 </body>
 </html>
-
