@@ -2,7 +2,7 @@
 
 *A clean, modern, and reliable browser-based tool to check your internet's online status, latency, and network details.*
 
-👉 **Live Demo: [Click Here](https://biraj2004.github.io/is-my-internet-working/) **  
+👉 **Live Demo: [Click Here](https://biraj2004.github.io/is-my-internet-working/)**  
 
 ---
 
