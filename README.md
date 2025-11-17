@@ -1,6 +1,6 @@
-# 📡 My-Internet-Tester
+#  My-Internet-Tester
 
-*A clean, modern, and reliable browser-based tool to check your internet status, latency, and network details.*
+*A clean, modern, and reliable browser-based tool to check your internet's online status, latency, and network details.*
 
 👉 **Live Demo:**  
 
@@ -20,7 +20,7 @@ Displays:
 
 - **IPv4 Address**  
 - **ISP Name**  
-- **Location** (City, Region, Country)  
+- **Location** (City, Region, Country)  -- [work in progress]
 - **ASN (Autonomous System Number)**  
 
 ### ⚡ Latency (Ping) Test  
