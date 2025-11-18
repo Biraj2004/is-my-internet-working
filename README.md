@@ -57,10 +57,11 @@ Includes:
 ### 🔁 Auto-Refresh  
 Automatically re-runs the ping test at:
 
-- **2 seconds**  
+- **3 seconds**  
 - **5 seconds**  
 - **10 seconds**  
 - **15 seconds**
+- **30 seconds**
 
 ### 📱 Fully Responsive  
 Works smoothly on:
