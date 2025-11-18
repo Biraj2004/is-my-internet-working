@@ -252,7 +252,9 @@
             let pingIntervalId = null;
             let jitterAbortController = null;
             let currentPingRate = parseInt(autoTestSelect.value, 10);
-            let isFirstLoad = true; 
+            
+            // CHANGED: Replaced 'isFirstLoad' with 'shouldFetchIp' for better control
+            let shouldFetchIp = true;
             
             const baseFetchOptions = {
                 cache: 'no-store'
@@ -310,11 +312,13 @@
                     dnsEl.textContent = 'Offline';
                     dnsUnitEl.textContent = '';
                     
-                    isFirstLoad = true;
+                    // FIX: If we go offline, we MUST fetch IP again when we come back.
+                    shouldFetchIp = true;
                 }
             }
 
-            // --- 2. Get IP Address & GeoIP Info (Robust Fallback) ---
+            // --- 2. Get IP Address & GeoIP Info (Robust Fallback & Retry Logic) ---
+            // CHANGED: Now returns TRUE if successful, FALSE if failed.
             async function getIPAndGeo() {
                 let ip = null;
                 try {
@@ -325,10 +329,11 @@
                     ipEl.textContent = `IPV4 - ${ip}`;
                 } catch (error) {
                     console.error('Failed to fetch IP:', error);
+                    // If we can't get IP, we can't get Geo. Mark as unavailable but return FALSE to retry.
                     ipEl.textContent = 'IPV4 - Unavailable';
                     ispEl.textContent = 'Unavailable';
                     locationEl.textContent = 'Unavailable';
-                    return; 
+                    return false; 
                 }
 
                 try {
@@ -356,6 +361,8 @@
                         locationEl.textContent = 'Unavailable';
                     }
                 }
+                
+                return true; // Success
             }
 
             // --- 3. Get User Agent ---
@@ -485,7 +492,7 @@
                     bottomMessage.classList.remove('translate-y-full');
                     bottomMessageText.textContent = 'Hold On! I am Checking...';
                     
-                    if (isFirstLoad) {
+                    if (shouldFetchIp) {
                         loadingMessage.classList.add('hidden');
                     }
 
@@ -517,10 +524,15 @@
                             dnsUnitEl.textContent = '';
                         }
 
-                        // FIX: If recovering from ANY failure (soft or hard), re-fetch IP.
-                        if (isFirstLoad) {
-                            await getIPAndGeo(); 
-                            getUserAgent();
+                        // FIX: Retry Logic.
+                        // If we haven't successfully fetched IP yet, try now.
+                        // If it fails, 'shouldFetchIp' stays TRUE, so we try again next loop.
+                        if (shouldFetchIp) {
+                            const success = await getIPAndGeo(); 
+                            if (success) {
+                                shouldFetchIp = false; // Stop retrying once we have it.
+                                getUserAgent();
+                            }
                         }
                     } else {
                         // --- FAILURE STATE ---
@@ -534,23 +546,18 @@
                         dnsEl.textContent = 'Failed';
                         dnsUnitEl.textContent = '';
                         
-                        if (isFirstLoad) {
+                        if (shouldFetchIp) {
                             ipEl.textContent = 'IPV4 - Unavailable';
                             ispEl.textContent = 'Unavailable';
                             locationEl.textContent = 'Unavailable';
                             getUserAgent();
                         }
 
-                        // FIX: Force IP re-fetch next time we succeed
-                        isFirstLoad = true;
+                        // If ping fails, force an IP check when we come back
+                        shouldFetchIp = true;
                     }
                     
                     bottomMessage.classList.add('translate-y-full');
-
-                    // Mark first load as complete ONLY if success
-                    if (latency !== null) {
-                        isFirstLoad = false;
-                    }
                 };
                 
                 runCheckCycle(); 
