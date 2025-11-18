@@ -253,8 +253,8 @@
             let jitterAbortController = null;
             let currentPingRate = parseInt(autoTestSelect.value, 10);
             
-            // CHANGED: Replaced 'isFirstLoad' with 'shouldFetchIp' for better control
             let shouldFetchIp = true;
+            let isIpFetchInProgress = false; // New flag to prevent stacking requests
             
             const baseFetchOptions = {
                 cache: 'no-store'
@@ -263,7 +263,6 @@
             // --- 1. Online/Offline Status Handler ---
             function updateOnlineStatus(isOnline = navigator.onLine) {
                 if (isOnline) {
-                    // --- GOING ONLINE ---
                     statusTitle.textContent = 'YES!';
                     statusTitle.classList.remove('text-red-600', 'text-blue-600');
                     statusTitle.classList.add('text-green-600');
@@ -279,7 +278,6 @@
                     startAutoCheckLoop(currentPingRate);
 
                 } else {
-                    // --- GOING OFFLINE ---
                     statusTitle.textContent = 'NO!';
                     statusTitle.classList.remove('text-green-600', 'text-blue-600');
                     statusTitle.classList.add('text-red-600');
@@ -312,33 +310,58 @@
                     dnsEl.textContent = 'Offline';
                     dnsUnitEl.textContent = '';
                     
-                    // FIX: If we go offline, we MUST fetch IP again when we come back.
+                    // Reset state for next connection
                     shouldFetchIp = true;
+                    isIpFetchInProgress = false;
                 }
             }
 
-            // --- 2. Get IP Address & GeoIP Info (Robust Fallback & Retry Logic) ---
-            // CHANGED: Now returns TRUE if successful, FALSE if failed.
+            // --- 2. Get IP Address & GeoIP Info (Robust + Timeout) ---
             async function getIPAndGeo() {
+                if (isIpFetchInProgress) return false;
+                isIpFetchInProgress = true;
+
+                // UI: Show spinner if we are retrying
+                if (ipEl.textContent.includes('Unavailable') || ipEl.textContent.includes('Offline')) {
+                   ipEl.innerHTML = '<span class="spinner inline-block align-middle"></span>';
+                }
+
                 let ip = null;
+                const timeoutDuration = 2000; // 2 seconds max for IP fetch
+
                 try {
-                    const ipResponse = await fetch('https://api.ipify.org?format=json', baseFetchOptions);
+                    const controller = new AbortController();
+                    const id = setTimeout(() => controller.abort(), timeoutDuration);
+                    
+                    const ipResponse = await fetch('https://api.ipify.org?format=json', {
+                         ...baseFetchOptions, signal: controller.signal 
+                    });
+                    clearTimeout(id);
+
                     if (!ipResponse.ok) throw new Error('Failed to fetch IP');
                     const ipData = await ipResponse.json();
                     ip = ipData.ip;
                     ipEl.textContent = `IPV4 - ${ip}`;
                 } catch (error) {
-                    console.error('Failed to fetch IP:', error);
-                    // If we can't get IP, we can't get Geo. Mark as unavailable but return FALSE to retry.
+                    // Don't log every timeout to console to keep it clean
                     ipEl.textContent = 'IPV4 - Unavailable';
                     ispEl.textContent = 'Unavailable';
                     locationEl.textContent = 'Unavailable';
+                    isIpFetchInProgress = false;
                     return false; 
                 }
 
+                // If IP fetch succeeded, try Geo
                 try {
-                    const geoResponse = await fetch(`https://ipapi.co/${ip}/json/`, baseFetchOptions);
-                    if (!geoResponse.ok) throw new Error('ipapi.co failed or blocked');
+                    const controller = new AbortController();
+                    const id = setTimeout(() => controller.abort(), timeoutDuration);
+
+                    const geoResponse = await fetch(`https://ipapi.co/${ip}/json/`, {
+                        ...baseFetchOptions, signal: controller.signal
+                    });
+                    clearTimeout(id);
+
+                    if (!geoResponse.ok) throw new Error('ipapi.co failed');
                     const data = await geoResponse.json();
                     if (data.error) throw new Error(data.reason);
 
@@ -346,22 +369,29 @@
                     locationEl.textContent = `${data.city || 'N/A'}, ${data.region || 'N/A'}, ${data.country_code || 'N/A'}`;
                 
                 } catch (error) {
-                    console.warn('Primary GeoIP failed, trying fallback...');
+                    // Fallback
                     try {
-                        const fallbackResponse = await fetch(`https://freeipapi.com/api/json/${ip}`, baseFetchOptions);
-                        if (!fallbackResponse.ok) throw new Error('Fallback GeoIP failed');
+                        const controller = new AbortController();
+                        const id = setTimeout(() => controller.abort(), timeoutDuration);
+
+                        const fallbackResponse = await fetch(`https://freeipapi.com/api/json/${ip}`, {
+                            ...baseFetchOptions, signal: controller.signal
+                        });
+                        clearTimeout(id);
+
+                        if (!fallbackResponse.ok) throw new Error('Fallback failed');
                         const data = await fallbackResponse.json();
 
                         ispEl.textContent = data.ispName || 'N/A';
                         locationEl.textContent = `${data.cityName || 'N/A'}, ${data.regionName || 'N/A'}, ${data.countryCode || 'N/A'}`;
 
                     } catch (fallbackError) {
-                        console.error('Fallback GeoIP also failed:', fallbackError);
                         ispEl.textContent = 'Unavailable';
                         locationEl.textContent = 'Unavailable';
                     }
                 }
                 
+                isIpFetchInProgress = false;
                 return true; // Success
             }
 
@@ -370,9 +400,7 @@
                 uaEl.textContent = navigator.userAgent;
             }
 
-            // --- 4. Improved Ping & DNS (OPTIMIZED FOR SPEED) ---
-
-            // Utility: median
+            // --- 4. Improved Ping & DNS ---
             function median(arr){ if(!arr || !arr.length) return null; const s = [...arr].sort((a,b)=>a-b); const mid = Math.floor(s.length/2); return s.length%2 ? s[mid] : Math.round((s[mid-1]+s[mid])/2); }
 
             const PING_ENDPOINTS = [
@@ -386,14 +414,11 @@
                 { name: 'Google', url: 'https://dns.google/resolve?name=google.com&type=A', accept: 'application/dns-json' }
             ];
 
-            // OPTIMIZATION 1: Reduced timeout from 2500ms to 1000ms. 
             async function measureFetchRTT(url, opts = {}) {
                 const start = performance.now();
                 try {
                     const sep = url.includes('?') ? '&' : '?';
                     const controller = new AbortController();
-                    
-                    // FAIL FAST: Timeout reduced to 1 second
                     const timeoutId = setTimeout(() => controller.abort(), 1000); 
                     
                     const response = await fetch(url + sep + '_=' + Date.now(), { 
@@ -416,7 +441,6 @@
                 }
             }
 
-            // OPTIMIZATION 2: Reduced attempts per server.
             async function measureEndpointMedian(url, attempts = 1, opts = {}) {
                 const times = [];
                 for (let i = 0; i < attempts; i++) {
@@ -427,45 +451,32 @@
                 return times.length ? median(times) : null;
             }
 
-            // OPTIMIZATION 3: Parallel Execution (The "Race")
             async function getPingLatency() {
                 try {
-                    // Run all probes in parallel
                     const promises = PING_ENDPOINTS.map(ep => measureEndpointMedian(ep.url, 1));
                     const results = await Promise.all(promises);
-                    
                     const valid = results.filter(ms => ms !== null);
-                    
-                    // If NO server responded, we are definitely offline
                     if (!valid.length) {
-                        // Last ditch effort: check IP API once
                         const fallback = await measureFetchRTT('https://api.ipify.org?format=json');
                         return fallback; 
                     }
-
-                    // Return the best (median) latency found
                     return median(valid);
                 } catch (e) {
-                    console.error('getPingLatency error', e);
                     return null;
                 }
             }
 
-            // OPTIMIZATION 4: Parallel DNS Check
             async function getDnsLatency() {
                 try {
                     const promises = DOH_RESOLVERS.map(r => {
                         const opts = { headers: { 'Accept': r.accept }, cache: 'no-store', mode: 'cors' };
                         return measureEndpointMedian(r.url, 1, opts);
                     });
-                    
                     const results = await Promise.all(promises);
                     const valid = results.filter(ms => ms !== null);
-                    
                     if (!valid.length) return null;
                     return median(valid);
                 } catch (e) {
-                    console.error('getDnsLatency error', e);
                     return null;
                 }
             }
@@ -478,12 +489,8 @@
                 currentPingRate = parseInt(rate, 10);
 
                 const runCheckCycle = async () => {
-                    if (jitterAbortController) {
-                        console.log("Auto-check paused during jitter test.");
-                        return;
-                    }
+                    if (jitterAbortController) return;
                     
-                    // 1. Show "WAIT!" state
                     statusTitle.textContent = 'WAIT!';
                     statusSubtitle.textContent = 'Checking again soon...'; 
                     statusTitle.classList.remove('text-green-600', 'text-red-600');
@@ -492,22 +499,21 @@
                     bottomMessage.classList.remove('translate-y-full');
                     bottomMessageText.textContent = 'Hold On! I am Checking...';
                     
-                    if (shouldFetchIp) {
+                    if (shouldFetchIp && !ipEl.textContent.includes('Unavailable')) {
                         loadingMessage.classList.add('hidden');
                     }
 
-                    // 2. Run probes immediately
+                    // Run Pings
                     const latency = await getPingLatency();
                     const dnsLatency = await getDnsLatency();
 
-                    // 3. Update UI based on probe results
                     if (!navigator.onLine) {
                         updateOnlineStatus(false);
                         return;
                     }
 
                     if (latency !== null) {
-                        // --- SUCCESS STATE ---
+                        // --- SUCCESS ---
                         statusTitle.textContent = 'YES!';
                         statusSubtitle.textContent = 'Your Internet is Working!';
                         statusTitle.classList.remove('text-blue-600');
@@ -524,18 +530,19 @@
                             dnsUnitEl.textContent = '';
                         }
 
-                        // FIX: Retry Logic.
-                        // If we haven't successfully fetched IP yet, try now.
-                        // If it fails, 'shouldFetchIp' stays TRUE, so we try again next loop.
+                        // RETRY LOGIC FOR IP:
                         if (shouldFetchIp) {
-                            const success = await getIPAndGeo(); 
-                            if (success) {
-                                shouldFetchIp = false; // Stop retrying once we have it.
-                                getUserAgent();
-                            }
+                            // Do NOT await here. Let it run in background so UI doesn't freeze.
+                            // We use the 'isIpFetchInProgress' flag to prevent stacking.
+                            getIPAndGeo().then(success => {
+                                if (success) {
+                                    shouldFetchIp = false;
+                                    getUserAgent();
+                                }
+                            });
                         }
                     } else {
-                        // --- FAILURE STATE ---
+                        // --- FAILURE ---
                         statusTitle.textContent = 'NO!';
                         statusSubtitle.textContent = 'Internet Not Working';
                         statusTitle.classList.remove('text-blue-600');
@@ -552,8 +559,6 @@
                             locationEl.textContent = 'Unavailable';
                             getUserAgent();
                         }
-
-                        // If ping fails, force an IP check when we come back
                         shouldFetchIp = true;
                     }
                     
@@ -569,12 +574,10 @@
                 if (!latencies || latencies.length < 2) {
                     return { jitter: 0, avg: 0, min: 0, max: 0 };
                 }
-
                 let jitters = [];
                 let sum = latencies[0];
                 let min = latencies[0];
                 let max = latencies[0];
-
                 for (let i = 1; i < latencies.length; i++) {
                     let diff = Math.abs(latencies[i] - latencies[i-1]);
                     jitters.push(diff);
@@ -582,17 +585,10 @@
                     if (latencies[i] < min) min = latencies[i];
                     if (latencies[i] > max) max = latencies[i];
                 }
-
                 const jitterSum = jitters.reduce((a, b) => a + b, 0);
                 const avgJitter = jitterSum / jitters.length;
                 const avgLatency = sum / latencies.length;
-
-                return {
-                    jitter: Math.round(avgJitter),
-                    avg: Math.round(avgLatency),
-                    min: min,
-                    max: max
-                };
+                return { jitter: Math.round(avgJitter), avg: Math.round(avgLatency), min: min, max: max };
             }
 
             async function runJitterTest(durationSeconds) {
@@ -600,10 +596,7 @@
                     alert('Cannot start test while offline.');
                     return;
                 }
-                
-                if (jitterAbortController) {
-                    jitterAbortController.abort();
-                }
+                if (jitterAbortController) jitterAbortController.abort();
                 jitterAbortController = new AbortController();
 
                 jitterButtons.forEach(btn => btn.disabled = true);
@@ -611,9 +604,8 @@
                 jitterProgressContainer.classList.remove('hidden');
                 jitterStatus.textContent = 'Running test...';
                 
-                const pingsPerSecond = 2;
                 let latencies = [];
-                const intervalTime = 1000 / pingsPerSecond;
+                const intervalTime = 500; // 2 pings/sec
                 const startTime = Date.now();
 
                 const testInterval = setInterval(async () => {
@@ -621,11 +613,8 @@
                         jitterAbortController.abort();
                         return;
                     }
-
                     const latency = await getPingLatency();
-                    if (latency !== null) {
-                        latencies.push(latency);
-                    }
+                    if (latency !== null) latencies.push(latency);
 
                     const elapsedTime = (Date.now() - startTime) / 1000;
                     const progress = Math.min((elapsedTime / durationSeconds) * 100, 100);
@@ -635,19 +624,16 @@
                     if (elapsedTime >= durationSeconds) {
                         clearInterval(testInterval);
                         jitterAbortController = null;
-
                         const stats = calculateJitterStats(latencies);
                         jitterResultEl.textContent = `${stats.jitter} ms`;
                         jitterAvgEl.textContent = `${stats.avg} ms`;
                         jitterMinEl.textContent = `${stats.min} ms`;
                         jitterMaxEl.textContent = `${stats.max} ms`;
-                        
                         jitterResults.classList.remove('hidden');
                         jitterProgressContainer.classList.add('hidden');
                         jitterButtons.forEach(btn => btn.disabled = false);
                         jitterStatus.textContent = 'Test complete';
                     }
-
                 }, intervalTime);
 
                 jitterAbortController.signal.addEventListener('abort', () => {
@@ -655,41 +641,29 @@
                     jitterAbortController = null;
                     jitterButtons.forEach(btn => btn.disabled = false);
                     jitterProgressContainer.classList.add('hidden');
-                    
-                    if(!navigator.onLine) {
-                        jitterStatus.textContent = 'Test Aborted (Offline)';
-                    } else {
-                        jitterStatus.textContent = 'Test Aborted';
-                    }
+                    jitterStatus.textContent = navigator.onLine ? 'Test Aborted' : 'Test Aborted (Offline)';
                 });
             }
 
-            // --- 7. Initial Load Function ---
+            // --- 7. Init ---
             async function initialLoad() {
                 if (!navigator.onLine) {
                     updateOnlineStatus(false);
                     return;
                 }
-                
                 loadingMessage.classList.remove('hidden');
                 startAutoCheckLoop(currentPingRate);
             }
 
-            // --- 8. Event Listeners ---
+            // --- 8. Listeners ---
             window.addEventListener('online', () => updateOnlineStatus(true));
             window.addEventListener('offline', () => updateOnlineStatus(false));
-
-            autoTestSelect.addEventListener('change', (e) => {
-                startAutoCheckLoop(e.target.value);
-            });
-
+            autoTestSelect.addEventListener('change', (e) => startAutoCheckLoop(e.target.value));
             jitterButtons.forEach(button => {
                 button.addEventListener('click', () => {
-                    const duration = parseInt(button.getAttribute('data-duration'), 10);
-                    runJitterTest(duration);
+                    runJitterTest(parseInt(button.getAttribute('data-duration'), 10));
                 });
             });
-
             initialLoad();
         });
     </script>
