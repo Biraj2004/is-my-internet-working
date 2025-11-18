@@ -380,7 +380,6 @@
             ];
 
             // OPTIMIZATION 1: Reduced timeout from 2500ms to 1000ms. 
-            // If a ping takes >1s, we treat it as a fail/lag for faster UI response.
             async function measureFetchRTT(url, opts = {}) {
                 const start = performance.now();
                 try {
@@ -518,6 +517,7 @@
                             dnsUnitEl.textContent = '';
                         }
 
+                        // FIX: If recovering from ANY failure (soft or hard), re-fetch IP.
                         if (isFirstLoad) {
                             await getIPAndGeo(); 
                             getUserAgent();
@@ -540,11 +540,15 @@
                             locationEl.textContent = 'Unavailable';
                             getUserAgent();
                         }
+
+                        // FIX: Force IP re-fetch next time we succeed
+                        isFirstLoad = true;
                     }
                     
                     bottomMessage.classList.add('translate-y-full');
 
-                    if (isFirstLoad) {
+                    // Mark first load as complete ONLY if success
+                    if (latency !== null) {
                         isFirstLoad = false;
                     }
                 };
